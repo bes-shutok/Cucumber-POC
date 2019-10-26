@@ -1,4 +1,4 @@
-package resfulapi;
+package restfulapi;
 
 import gherkin.deps.com.google.gson.JsonParser;
 import io.cucumber.core.logging.Logger;
@@ -24,7 +24,7 @@ public class RestSteps {
     private String responseString;
     final static String FHIR_API = "http://aws-integration-dev.datafusion.idexx.com/fhir/r4";
     @Given("^the FHIR API responds$")
-    public void theLambdaIntegrationServerIsOnAndFHIREAPIRespondsOnMetadataRequest() throws Throwable {
+    public void theFhirApiResponds() throws Throwable {
         try {
             HttpAuthenticationFeature feature =
                     HttpAuthenticationFeature.basic("vcp_dev", "y6s3fmZR4j");
@@ -48,8 +48,8 @@ public class RestSteps {
         }
     }
 
-    @When("^we are requesting FHIR API code for (\\w)")
-    public void weAreRequestingFHIRECode(String code) throws Throwable  {
+    @When("^we are requesting FHIR API code for (\\w*)")
+    public void weAreRequestingFhirApiCode(String code) throws Throwable  {
         try {
             HttpAuthenticationFeature feature =
                     HttpAuthenticationFeature.basic("vcp_dev", "y6s3fmZR4j");
@@ -75,7 +75,7 @@ public class RestSteps {
     }
 
     @Then("^the response should be JSON:")
-    public void theResponseShouldBeJSON(String jsonExpected) {
+    public void theResponseShouldBeJson(String jsonExpected) {
         JsonParser parser = new JsonParser();
         Assert.assertEquals(parser.parse(responseString),parser.parse(jsonExpected), "Incorrect JSON representation");
     }
