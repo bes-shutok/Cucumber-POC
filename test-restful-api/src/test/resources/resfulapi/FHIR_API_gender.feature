@@ -1,9 +1,9 @@
-Feature: Does FHIRE API works as expected?
-  FHIRE API works as expected for gender coding
+Feature: Does FHIR API works as expected?
+  FHIR API works as expected for gender coding
 
-  Scenario: Gender coding with FHIRE API
-    Given The Lambda Integration server is on and FHIRE API responds on /metadata request
-    When We are requesting FHIRE response for code m
+  Scenario: Gender coding with FHIR API
+    Given the FHIR API responds
+    When we are requesting FHIR API code for m
     Then the response should be JSON:
       """
       {"resourceType":"Parameters","parameter":[{"name":"result","valueBoolean":true},{"name":"match",
