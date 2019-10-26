@@ -6,78 +6,54 @@ import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.glassfish.jersey.client.*;
-import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
-import org.glassfish.jersey.logging.LoggingFeature;
 import org.testng.Assert;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import java.net.HttpURLConnection;
 
 public class RestSteps {
+    private static final String CODE_FOR = "/ConceptMap/gender-map/$translate?target=http://snomed.info/sct&code=";
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    private Response response;
+    private final FhireApiRequest request = new FhireApiRequest();
     private String responseString;
-    final static String FHIR_API = "http://aws-integration-dev.datafusion.idexx.com/fhir/r4";
+    private Response response;
+
     @Given("^the FHIR API responds$")
-    public void theFhirApiResponds() throws Throwable {
-        try {
-            HttpAuthenticationFeature feature =
-                    HttpAuthenticationFeature.basic("vcp_dev", "y6s3fmZR4j");
-            final Client client = ClientBuilder.newClient(
-                    new ClientConfig().register( LoggingFeature.class ).register(feature) );
+    public void theFhirApiResponds() throws Throwable  {
 
-            WebTarget webTarget = client.target(FHIR_API + "/metadata");
-            logger.info("Trying to invoke the " + webTarget.toString());
-            Invocation.Builder invocationBuilder =  webTarget.request("application/json+fhir");
-            response = invocationBuilder.get();
-            responseString=response.readEntity(String.class);
-            Assert.assertEquals(response.getStatus(), HttpURLConnection.HTTP_OK,
-                    "Did not receive OK, the response: " + response.getStatus());
-            logger.info("Response: " + responseString);
+        // Sending get request for metadata
+        response = request.fhirApiRequest("/metadata");
 
-        } catch (RuntimeException r) {
-            throw r;
-        } catch (Exception e) {
-            System.out.println("Exception caught");
-            e.printStackTrace();
-        }
+        // Confirming that the request was sent successfully
+        Assert.assertEquals(response.getStatus(), HttpURLConnection.HTTP_OK,
+                "Did not receive OK, the response: " + response.getStatus());
+
+        // Logging step
+        logger.info("Response: " + response.readEntity(String.class));
     }
 
     @When("^we are requesting FHIR API code for (\\w*)")
     public void weAreRequestingFhirApiCode(String code) throws Throwable  {
-        try {
-            HttpAuthenticationFeature feature =
-                    HttpAuthenticationFeature.basic("vcp_dev", "y6s3fmZR4j");
-            final Client client = ClientBuilder.newClient(
-                    new ClientConfig().register( LoggingFeature.class ).register(feature) );
 
-            WebTarget webTarget = client.target(FHIR_API +
-                    "/ConceptMap/gender-map/$translate?target=http://snomed.info/sct&code=" + code);
-            logger.info("Trying to invoke the " + webTarget.toString());
-            Invocation.Builder invocationBuilder =  webTarget.request("application/json+fhir");
-            response = invocationBuilder.get();
-            responseString=response.readEntity(String.class);
-            Assert.assertEquals(response.getStatus(), HttpURLConnection.HTTP_OK,
-                    "Did not receive OK, the response: " + response.getStatus());
-            logger.info("Response: " + responseString);
+        // Sending get request for the FHIR API coding
+        response = request.fhirApiRequest(CODE_FOR + code);
 
-        } catch (RuntimeException r) {
-            throw r;
-        } catch (Exception e) {
-            System.out.println("Exception caught");
-            e.printStackTrace();
-        }
+        // Confirming that the request was sent successfully
+        Assert.assertEquals(response.getStatus(), HttpURLConnection.HTTP_OK,
+                "Did not receive OK, the response: " + response.getStatus());
+
+        // Saving the result for later check
+        responseString=response.readEntity(String.class);
+
+        // Logging step
+        logger.info("Response: " + responseString);
     }
 
     @Then("^the response should be JSON:")
     public void theResponseShouldBeJson(String jsonExpected) {
         JsonParser parser = new JsonParser();
+
+        // Confirming that the response JSON is the same as expected
         Assert.assertEquals(parser.parse(responseString),parser.parse(jsonExpected), "Incorrect JSON representation");
     }
-
 }
