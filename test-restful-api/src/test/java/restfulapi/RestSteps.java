@@ -1,11 +1,14 @@
 package restfulapi;
 
-import gherkin.deps.com.google.gson.JsonParser;
+//import gherkin.deps.com.google.gson.JsonParser;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import io.cucumber.core.logging.Logger;
 import io.cucumber.core.logging.LoggerFactory;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+//import io.cucumber.messages.internal.com.google.gson.JsonParser;
 import org.testng.Assert;
 
 import javax.ws.rs.core.Response;
@@ -17,6 +20,7 @@ public class RestSteps {
     private final FhireApiRequest request = new FhireApiRequest();
     private String responseString;
     private Response response;
+    private JsonElement jsonResponse;
 
     @Given("^the FHIR API responds$")
     public void theFhirApiResponds() throws Throwable  {
@@ -45,15 +49,31 @@ public class RestSteps {
         // Saving the result for later check
         responseString=response.readEntity(String.class);
 
+        jsonResponse = JsonParser.parseString(responseString);
+        // should be a JOSN object
+        Assert.assertTrue(jsonResponse.isJsonObject());
+
         // Logging step
         logger.info("Response: " + responseString);
     }
 
     @Then("^the response should be JSON:")
-    public void theResponseShouldBeJson(String jsonExpected) {
-        JsonParser parser = new JsonParser();
+    public void theResponseShouldBeJson(String expectedResponse) {
+        JsonElement jsonExpected = JsonParser.parseString(expectedResponse);
+
+        // should be a JOSN object
+        Assert.assertTrue(jsonExpected.isJsonObject());
+        logger.info("The JSON" + jsonResponse);
 
         // Confirming that the response JSON is the same as expected
-        Assert.assertEquals(parser.parse(responseString),parser.parse(jsonExpected), "Incorrect JSON representation");
+        Assert.assertEquals(jsonResponse,jsonExpected, "Incorrect JSON representation");
+    }
+
+    @Then("the JSON response should contain correct values for {int} and {string}")
+    public void theJSONResponseShouldContainCorrectAndGenericMaleValues(Integer codeValue, String displayValue) {
+
+        // Write code here that turns the phrase above into concrete actions
+        System.out.println("Received code " + codeValue + " and display " + displayValue);
+
     }
 }
