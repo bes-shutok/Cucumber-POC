@@ -1,8 +1,8 @@
 @FunctionalTest2
-Feature: Does FHIR API works as expected?
+Feature: Does FHIR API works for known equivalences as expected?
   FHIR API works as expected for gender coding
 
-  Scenario: Some specific coding with FHIR API
+  Scenario: Some specific coding with FHIR API for known equivalences
     Given the FHIR API responds
     When we are requesting FHIR API code for m
     Then the response should be JSON:
