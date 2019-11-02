@@ -4,7 +4,7 @@ Feature: Does FHIR API works for known equivalences as expected?
 
   Scenario Outline: 'Generic male' coding with FHIR API for known equivalences
     Given the FHIR API responds
-    When we are requesting FHIR API code for <equivalence>
+    When we are requesting FHIR API coding for: <equivalence>
 
     Then the response should be JSON:
       """

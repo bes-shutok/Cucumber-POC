@@ -12,7 +12,7 @@ import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
-class FhireApiRequest {
+class FhirApiRequest {
     private final static String FHIR_API = "http://aws-integration-dev.datafusion.idexx.com/fhir/r4/";
 
     private final Logger logger = LoggerFactory.getLogger(getClass());

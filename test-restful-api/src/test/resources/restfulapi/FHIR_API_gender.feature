@@ -5,9 +5,9 @@ Feature: Does FHIR API works for known equivalences as expected?
 
   Scenario Outline: Gender coding with FHIR API for known equivalences
     Given the FHIR API responds
-    When we are requesting FHIR API code for <equivalence>
+    When we are requesting FHIR API coding for: <equivalence>
 
-    Then the JSON response should contain correct values for <code> and <display>
+    Then the JSON response should contain correct coding (code <code> and display <display>)
     Examples:
       | equivalence    | code             | display          |
       | m              | 248153007        | "Generic male"   |

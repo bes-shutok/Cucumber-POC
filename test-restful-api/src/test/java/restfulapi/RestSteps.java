@@ -16,8 +16,7 @@ import java.net.URLEncoder;
 public class RestSteps {
     private static final String CODE_FOR = "/ConceptMap/gender-map/$translate?target=http://snomed.info/sct&code=";
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    private final FhireApiRequest request = new FhireApiRequest();
-    private String responseString;
+    private final FhirApiRequest request = new FhirApiRequest();
     private Response response;
     private JsonElement jsonResponse;
 
@@ -35,7 +34,7 @@ public class RestSteps {
         logger.info("Response: " + response.readEntity(String.class));
     }
 
-    @When("we are requesting FHIR API code for ([a-zA-Z_ ]+$)")
+    @When("we are requesting FHIR API coding for: ([a-zA-Z_ ]+$)")
     public void weAreRequestingFhirApiCode(String code) throws Throwable  {
 
         // Sending get request for the FHIR API coding
@@ -45,10 +44,11 @@ public class RestSteps {
         Assert.assertEquals(response.getStatus(), HttpURLConnection.HTTP_OK,
                 "Did not receive OK, the response: " + response.getStatus());
 
-        // Saving the result for later check
-        responseString=response.readEntity(String.class);
+        String responseString=response.readEntity(String.class);
 
+        // Saving the result for later check
         jsonResponse = JsonParser.parseString(responseString);
+
         // should be a JSON object
         Assert.assertTrue(jsonResponse.isJsonObject());
 
@@ -68,7 +68,7 @@ public class RestSteps {
         Assert.assertEquals(jsonResponse,jsonExpected, "Incorrect JSON representation");
     }
 
-    @Then("the JSON response should contain correct values for {long} and {string}")
+    @Then("the JSON response should contain correct coding \\(code {long} and display {string})")
     public void theJSONResponseShouldContainCorrectValues(Long codeValue, String displayValue) {
 
         Utils utils = new Utils();

@@ -5,10 +5,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.testng.Assert;
 
-import static com.google.gson.JsonParser.parseString;
-
-
-
 final class Utils {
 
     /*
