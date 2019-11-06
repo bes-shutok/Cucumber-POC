@@ -13,15 +13,15 @@ final class Utils {
     * "part":[{"name":"equivalence","valueCode":"EQUIVALENT"},{"name":"concept",
     * "valueCoding":{"system":"http://snomed.info/sct","code":"248153007","display":"Generic male"}}]}]}
     * */
-    void validateFhirResponse(JsonElement jsonResponse, String display) {
+
+    void validateFhirResponse(JsonElement jsonResponse, boolean resultExpected) {
         JsonArray parameter = jsonResponse.getAsJsonObject().getAsJsonArray("parameter");
-        JsonArray part = parameter.get(1).getAsJsonObject().getAsJsonArray("part");
-        JsonObject valueCoding = part.get(1).getAsJsonObject().getAsJsonObject("valueCoding");
-        String displayActual = valueCoding.getAsJsonPrimitive("display").getAsString();
+        boolean resultActual = parameter.get(0).getAsJsonObject()
+                .getAsJsonPrimitive("valueBoolean").getAsBoolean();
 
         // Assert that the actual data is equal to received data
-        Assert.assertEquals(displayActual, display, "Actual display value {" + displayActual +
-                "} is not equal to expected display value {" + display + "}.");
+        Assert.assertEquals(resultActual, resultExpected, "Actual matching result value {" + resultActual +
+                "} is not equal to expected matching result value {" + resultExpected + "}.");
     }
 
     void validateFhirResponse(JsonElement jsonResponse, Long code,  String display) {

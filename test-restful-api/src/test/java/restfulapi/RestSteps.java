@@ -8,7 +8,6 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.testng.Assert;
-
 import javax.ws.rs.core.Response;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
@@ -34,7 +33,9 @@ public class RestSteps {
         logger.info("Response: " + response.readEntity(String.class));
     }
 
-    @When("we are requesting FHIR API coding for: ([a-zA-Z_ ]+$)")
+    // Using Regular Expressions in Gherkin step phrase requires special symbols.
+    // '^' at the beginning  and '$' at the end of the phrase.
+    @When("^we are requesting FHIR API coding for: ([a-zA-Z_ ]+$)")
     public void weAreRequestingFhirApiCode(String code) throws Throwable  {
 
         // Sending get request for the FHIR API coding
@@ -68,15 +69,28 @@ public class RestSteps {
         Assert.assertEquals(jsonResponse,jsonExpected, "Incorrect JSON representation");
     }
 
-    @Then("the JSON response should contain correct coding \\(code {long} and display {string})")
+    // Using Cucumber Expressions in Gherkin step phrase
+    @Then("the JSON response should contain correct code {long} and display {string}")
     public void theJSONResponseShouldContainCorrectValues(Long codeValue, String displayValue) {
 
         Utils utils = new Utils();
         utils.validateFhirResponse(jsonResponse, codeValue, displayValue);
 
         // Write code here that turns the phrase above into concrete actions
-        System.out.println("Received code '" + codeValue + "' and display '" + displayValue + "'.");
-
-
+        System.out.println("Expected code '" + codeValue + "' and display '" + displayValue + "'.");
     }
+
+    // Using Regular Expressions in Gherkin step phrase requires special symbols.
+    // '^' at the beginning  and '$' at the end of the phrase.
+    // Special symbols like '(',')' must be escaped
+    @Then("^the JSON response confirms that the mapping result \\(valueBoolean\\) = (true|false)$")
+    public void theMappingResult(String resultExpected) {
+
+        Utils utils = new Utils();
+        utils.validateFhirResponse(jsonResponse, Boolean.parseBoolean(resultExpected));
+
+        // Write code here that turns the phrase above into concrete actions
+        System.out.println("Expected valueBoolean '" + resultExpected + "'.");
+    }
+
 }
