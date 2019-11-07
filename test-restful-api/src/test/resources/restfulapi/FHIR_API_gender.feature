@@ -5,7 +5,7 @@ Feature: Does FHIR API works for known equivalences as expected?
 
   Scenario Outline: Gender coding with FHIR API for known equivalences
     Given the FHIR API responds
-    When we are requesting FHIR API coding for: <equivalence>
+    When we are requesting gender FHIR API coding for: <equivalence>
     Then the JSON response should contain correct code <code> and display <display>
     Examples:
       | equivalence    | code             | display          |
@@ -19,7 +19,7 @@ Feature: Does FHIR API works for known equivalences as expected?
 
   Scenario Outline: Negative testing for FHIR API
     Given the FHIR API responds
-    When we are requesting FHIR API coding for: <equivalence>
+    When we are requesting gender FHIR API coding for: <equivalence>
     Then the JSON response confirms that the mapping result (valueBoolean) = <resultExpected>
     Examples:
       | equivalence    | resultExpected |

@@ -13,7 +13,12 @@ import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 
 public class RestSteps {
-    private static final String CODE_FOR = "/ConceptMap/gender-map/$translate?target=http://snomed.info/sct&code=";
+    private static final String GENDER_CODE_FOR = "/ConceptMap/gender-map/$translate?" +
+            "target=http://snomed.info/sct&code=";
+    private static final String SPECIES_CODE_FOR = "/ConceptMap/species-map/$translate?" +
+            "target=http://snomed.info/sct&code=";
+    private static final String BREED_CODE_FOR = "/ConceptMap/breed-map/$translate?" +
+            "target=http://snomed.info/sct&code=";
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final FhirApiRequest request = new FhirApiRequest();
     private Response response;
@@ -35,11 +40,21 @@ public class RestSteps {
 
     // Using Regular Expressions in Gherkin step phrase requires special symbols.
     // '^' at the beginning  and '$' at the end of the phrase.
-    @When("^we are requesting FHIR API coding for: ([a-zA-Z_ ]+$)")
-    public void weAreRequestingFhirApiCode(String code) throws Throwable  {
+    @When("^we are requesting (gender|species|breed) FHIR API coding for: ([a-zA-Z_ ]+$)")
+    public void weAreRequestingFhirApiCode(String mode, String code) throws Throwable  {
 
         // Sending get request for the FHIR API coding
-        response = request.fhirApiRequest(CODE_FOR + URLEncoder.encode(code, "UTF-8"));
+        switch (mode) {
+            case "gender":
+                response = request.fhirApiRequest(GENDER_CODE_FOR + URLEncoder.encode(code, "UTF-8"));
+                break;
+            case "species":
+                response = request.fhirApiRequest(SPECIES_CODE_FOR + URLEncoder.encode(code, "UTF-8"));
+                break;
+            case "breed":
+                response = request.fhirApiRequest(BREED_CODE_FOR + URLEncoder.encode(code, "UTF-8"));
+                break;
+        }
 
         // Confirming that the request was sent successfully
         Assert.assertEquals(response.getStatus(), HttpURLConnection.HTTP_OK,
